@@ -1,5 +1,5 @@
 {
-  "name": "example-project",
+  "name": "udacity-project",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "build-dev": "webpack serve  --config webpack.dev.js --open firefox"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bruno Gurgel",
   "license": "ISC",
   "description": "",
   "devDependencies": {
