@@ -48,12 +48,12 @@ app.get('/all', sendData = (req,res) => {
     res.send(dataObject)
 })
 
-app.post('/addText', (req,res)  => {
-    let newEntry = {
-        agreement = req.body.agreement,
-        subjectivity = req.body.subjectivity
-    }
+// app.post('/addText', (req,res)  => {
+//     let newEntry = {
+//         agreement = req.body.agreement,
+//         subjectivity = req.body.subjectivity
+//     }
 
-    dataObject = newEntry;
-    res.send(dataObject);    
-} )
+//     dataObject = newEntry;
+//     res.send(dataObject);    
+// } )

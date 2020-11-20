@@ -4,14 +4,22 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
     event.preventDefault();
     // check what text was put into the form field
     let formText = document.getElementById('name').value;
-    checkForName(formText);
-
+    // checkForName(formText);
     console.log("::: Form Submitted :::");
-    fetch('http://localhost:8081/test')
-    .then(res => res.json())
-    .then(function(data) {
-        document.getElementById('results').innerHTML = data.message;
+    getApiKey()
+    .then (data => {
+        const apiKey = data.key;
     })
+
+    async function getApiKey () {
+        let req = await fetch('http://localhost:8081/api');
+        try {
+            let data = await req.json();
+            return data;
+        } catch (error){
+            console.log('ERROR', error);
+        }
+}
 });
 
 export { handleSubmit }
