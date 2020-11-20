@@ -1,8 +1,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const apiKey = process.env.API_KEY;
-var path = require('path')
+
+const path = require('path')
 const express = require('express')
 const mockAPIResponse = require('./mockAPI.js')
 const bodyParser = require('body-parser')
@@ -21,16 +21,39 @@ app.use(express.static('dist'))
 
 console.log(__dirname)
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     // res.sendFile('dist/index.html')
     res.sendFile(path.resolve('src/client/views/index.html'))
 })
 
+const dataObject ={};
+
 // designates what port the app will listen to for incoming requests
-app.listen(8081, function () {
+app.listen(8081, () =>  {
     console.log('Example app listening on port 8081!')
 })
 
-app.get('/test', function (req, res) {
+app.get('/test', (req, res) => {
     res.send(mockAPIResponse)
 })
+
+const apiKey = process.env.API_KEY;
+console.log(`Your API key is ${apiKey}`);
+
+app.get('/api', (req,res) => {
+    res.send({key: apiKey})
+})
+
+app.get('/all', sendData = (req,res) => {
+    res.send(dataObject)
+})
+
+app.post('/addText', (req,res)  => {
+    let newEntry = {
+        agreement = req.body.agreement,
+        subjectivity = req.body.subjectivity
+    }
+
+    dataObject = newEntry;
+    res.send(dataObject);    
+} )
