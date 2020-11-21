@@ -73,11 +73,11 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         try {
             let textData = await req.json();
             document.getElementById('results').innerHTML = `
-            <p class="results__item"> Text: ${formText} </p>
-            <p class="results__item"> Agreement: ${textData.agreement} </p>
-            <p class="results__item"> Subjectivity: ${textData.subjectivity} </p>
-            <p class="results__item"> Confidence: ${textData.confidence}% </p>
-            <p class="results__item"> Irony: ${textData.irony} </p>`;
+            <li class="results__item">Text: ${formText}</li>
+            <li class="results__item">Agreement: ${textData.agreement}</li>
+            <li class="results__item">Subjectivity: ${textData.subjectivity}</li>
+            <li class="results__item">Confidence: ${textData.confidence}%</li>
+            <li class="results__item">Irony: ${textData.irony}</li>`;
         } catch (error){
         alert("There was an error:", error.message);
         }
