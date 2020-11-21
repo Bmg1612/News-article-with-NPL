@@ -1,3 +1,7 @@
+$font: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+  Arial, sans-serif;
+$full-width: 100%;
+
 body {
   max-width: 100%;
   max-height: 100%;
@@ -5,6 +9,10 @@ body {
   padding: 0px;
   font-size: 16px;
   background-color: #53dcd0;
+  font-family: $font;
+  p {
+    margin: 0px;
+  }
 }
 
 .grid__container {
@@ -17,21 +25,18 @@ body {
     "footer";
   gap: 20px;
 }
-.page__nav {
+
+nav {
   grid-area: nav;
-  width: 100%;
+  width: $full-width;
 }
 
-.page__main {
+main {
   grid-area: main;
-  width: 100%;
+  width: $full-width;
 }
 
-.page__footer {
+footer {
   grid-area: footer;
-  width: 100%;
-}
-
-p {
-  margin: 0px;
+  width: $full-width;
 }
