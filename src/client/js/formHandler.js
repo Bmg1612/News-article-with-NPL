@@ -14,8 +14,20 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         return apiKey;
     })
     .then (apiKey => {
-        getTextAnalysis(baseUrl, apiKey, formText)
-    });
+        return getTextAnalysis(baseUrl, apiKey, formText);
+    })
+    .then(apiResponse => {
+        postData('/addText', {
+            agreement: apiResponse.agreement,
+            subjectivity: apiResponse.subjectivity,
+            confidence: apiResponse.confidence,
+            irony: apiResponse.irony
+        });
+
+    })
+    .then(data => {
+        updateUI();
+    })
 
     async function getApiKey () {
         let req = await fetch('http://localhost:8081/api');
@@ -23,7 +35,7 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
             let data = await req.json();
             return data;
         } catch (error) {
-            console.log('ERROR', error);
+            alert("There was an error:", error.message);
         }
     }
 
@@ -31,10 +43,43 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         let res = await fetch(`${url}key=${key}&of=json&txt=${text}.&model=general&lang=en`);
         try {
             let apiResponse = await res.json();
-            console.log(apiResponse);
             return apiResponse;
         } catch (error) {
-            console.log('ERROR', error);
+            alert("There was an error:", error.message);
+        }
+    }
+
+    async function postData (url = '', data = {}) {
+        let res = await fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+
+        try {
+            let newData = await res.json();
+            return newData
+        } catch(error) {
+            alert("There was an error:", error.message);
+        }
+    }
+
+    async function updateUI () {
+        let req = await fetch('/all');
+
+        try {
+            let textData = await req.json();
+            document.getElementById('results').innerHTML = `
+            <p class="results__item"> Text: ${formText} </p>
+            <p class="results__item"> Agreement: ${textData.agreement} </p>
+            <p class="results__item"> Subjectivity: ${textData.subjectivity} </p>
+            <p class="results__item"> Confidence: ${textData.confidence}% </p>
+            <p class="results__item"> Irony: ${textData.irony} </p>`;
+        } catch (error){
+        alert("There was an error:", error.message);
         }
     }
 });

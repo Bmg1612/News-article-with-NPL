@@ -38,7 +38,6 @@ app.get('/test', (req, res) => {
 })
 
 const apiKey = process.env.API_KEY;
-console.log(`Your API key is ${apiKey}`);
 
 app.get('/api', (req,res) => {
     res.send({key: apiKey})
@@ -48,12 +47,11 @@ app.get('/all', sendData = (req,res) => {
     res.send(dataObject)
 })
 
-// app.post('/addText', (req,res)  => {
-//     let newEntry = {
-//         agreement = req.body.agreement,
-//         subjectivity = req.body.subjectivity
-//     }
+app.post('/addText', (req,res)  => {
+    dataObject['agreement'] = req.body.agreement,
+    dataObject['subjectivity'] = req.body.subjectivity,
+    dataObject['confidence'] = req.body.confidence,
+    dataObject['irony'] = req.body.irony
 
-//     dataObject = newEntry;
-//     res.send(dataObject);    
-// } )
+    res.send(dataObject);    
+} )
