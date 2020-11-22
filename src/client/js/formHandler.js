@@ -1,4 +1,4 @@
-import { checkForName } from "./nameChecker"
+import { checkForURL } from "./urlChecker"
 
 const handleSubmit = document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
     event.preventDefault();
@@ -6,28 +6,34 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
     let formText = document.getElementById('name').value;
     const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
     let apiKey = "";
-    // checkForName(formText);
-    console.log("::: Form Submitted :::");
-    getApiKey()
-    .then (data => {
-        apiKey = data.key;
-        return apiKey;
-    })
-    .then (apiKey => {
-        return getTextAnalysis(baseUrl, apiKey, formText);
-    })
-    .then(apiResponse => {
-        postData('/addText', {
-            agreement: apiResponse.agreement,
-            subjectivity: apiResponse.subjectivity,
-            confidence: apiResponse.confidence,
-            irony: apiResponse.irony
-        });
 
-    })
-    .then(data => {
-        updateUI();
-    })
+    if (checkForURL(formText)) {
+
+        console.log("::: Form Submitted :::");
+        getApiKey()
+        .then (data => {
+            apiKey = data.key;
+            return apiKey;
+        })
+        .then (apiKey => {
+            return getTextAnalysis(baseUrl, apiKey, formText);
+        })
+        .then(apiResponse => {
+            postData('/addText', {
+                agreement: apiResponse.agreement,
+                subjectivity: apiResponse.subjectivity,
+                confidence: apiResponse.confidence,
+                irony: apiResponse.irony
+            });
+
+        })
+        .then(data => {
+            updateUI();
+        })
+    } else {
+        alert("Invalid URL");
+    }
+
 
     async function getApiKey () {
         let req = await fetch('http://localhost:8081/api');
@@ -40,9 +46,11 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
     }
 
     async function getTextAnalysis (url, key, formURL) {
+        console.log("::: Waiting API Response :::");
         let res = await fetch(`${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`);
         try {
             let apiResponse = await res.json();
+            console.log("::: Response Sent :::");
             return apiResponse;
         } catch (error) {
             alert("There was an error:", error.message);
@@ -73,7 +81,7 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         try {
             let textData = await req.json();
             document.getElementById('results').innerHTML = `
-            <li class="results__item"><span class="api__title">URL:</span>${formText}</li>
+            <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
