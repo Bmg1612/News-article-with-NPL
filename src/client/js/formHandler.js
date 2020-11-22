@@ -39,8 +39,8 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         }
     }
 
-    async function getTextAnalysis (url, key, text) {
-        let res = await fetch(`${url}key=${key}&of=json&txt=${text}.&model=general&lang=en`);
+    async function getTextAnalysis (url, key, formURL) {
+        let res = await fetch(`${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`);
         try {
             let apiResponse = await res.json();
             return apiResponse;
@@ -73,7 +73,7 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         try {
             let textData = await req.json();
             document.getElementById('results').innerHTML = `
-            <p class="results__text"><span class="api__title__text">Text:</span><br>${formText}</p>
+            <li class="results__item"><span class="api__title">URL:</span>${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
