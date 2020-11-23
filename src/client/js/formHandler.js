@@ -1,5 +1,6 @@
 import { checkForURL } from "./urlChecker"
 
+//Wait Dom to be loaded - Better for Jest testing
 const handleSubmit = document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
         event.preventDefault();
@@ -7,7 +8,7 @@ const handleSubmit = document.addEventListener('DOMContentLoaded', function () {
         let formText = document.getElementById('name').value;
         const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
         let apiKey = "";
-
+        // Checking if the URL is valid
         if (checkForURL(formText)) {
 
         console.log("::: Form Submitted :::");

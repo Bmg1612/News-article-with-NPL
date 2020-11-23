@@ -44,6 +44,7 @@ module.exports = {
             clientsClaim: true,
             skipWaiting: true,
             sourcemap: true,
+            //Was not founding the files because there whas an 'auto' before them
             modifyURLPrefix: {
                 'auto./': '',
                 'auto':''
