@@ -11,13 +11,8 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
 
         console.log("::: Form Submitted :::");
         getApiKey()
-        .then (data => {
-            apiKey = data.key;
-            return apiKey;
-        })
-        .then (apiKey => {
-            return getTextAnalysis(baseUrl, apiKey, formText);
-        })
+        .then (data => apiKey = data.key)
+        .then (apiKey => getTextAnalysis(baseUrl, apiKey, formText))
         .then(apiResponse => {
             postData('/addText', {
                 agreement: apiResponse.agreement,
@@ -27,9 +22,7 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
             });
 
         })
-        .then(data => {
-            updateUI();
-        })
+        .then(data => updateUI());
     } else {
         alert("Invalid URL");
     }
@@ -77,15 +70,17 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
 
     async function updateUI () {
         let req = await fetch('/all');
+        let results = document.getElementById('results');
 
         try {
             let textData = await req.json();
-            document.getElementById('results').innerHTML = `
+            results.innerHTML = `
             <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
             <li class="results__item"><span class="api__title">Irony:</span> ${textData.irony}.</li>`;
+            results.scrollIntoView({behavior: "smooth"});
         } catch (error){
         alert("There was an error:", error.message);
         }
