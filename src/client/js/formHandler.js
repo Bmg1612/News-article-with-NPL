@@ -1,7 +1,7 @@
 import { checkForURL } from "./urlChecker"
 
-document.addEventListener('DOMContentLoaded', function () {
-    const handleSubmit = document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
+const handleSubmit = document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
         event.preventDefault();
 
         let formText = document.getElementById('name').value;
