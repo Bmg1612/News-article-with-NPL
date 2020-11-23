@@ -39,8 +39,8 @@
     "webpack-cli": "^4.2.0"
   },
   "jest": {
-      "moduleNameMapper": {
-          "\\.(css|scss)$": "identity-obj-proxy"
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "identity-obj-proxy"
     }
   }
 }

@@ -1,12 +1,11 @@
-// The describe() function takes two arguments - a string description, and a test suite as a callback function.  
-
-const { TestScheduler } = require('jest');
+  const { TestScheduler } = require('jest');
 const { handleSubmit } = require('../src/client/index.js');
 
 // A test suite may contain one or more related tests    
 describe("Testing the submit functionality", () => {
     // The test() function has two arguments - a string description, and an actual test as a callback function. 
     test("Testing the handleSubmit() function", () => {
+        //Simulating DOM environment for testing
         document.body.innerHTML = `
         <form class="page__form">
             <input class="input__text" id="name" type="text" name="input" placeholder="Put the URL here">
@@ -17,7 +16,6 @@ describe("Testing the submit functionality", () => {
             <ul class="results__list" id="results"></ul>
         </div>
         `;
-        require('../src/client/js/formHandler.js');
 
         let submit = document.querySelector('#submit');
         let formText = document.getElementById('name').value;
