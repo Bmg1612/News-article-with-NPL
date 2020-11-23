@@ -8,6 +8,4 @@ import './styles/header.scss'
 
 export {checkForURL, handleSubmit}
 
-console.log(checkForURL);
-
 

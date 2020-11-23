@@ -1,13 +1,14 @@
 import { checkForURL } from "./urlChecker"
 
-const handleSubmit = document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
-    event.preventDefault();
+const handleSubmit = document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
+        event.preventDefault();
 
-    let formText = document.getElementById('name').value;
-    const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
-    let apiKey = "";
+        let formText = document.getElementById('name').value;
+        const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
+        let apiKey = "";
 
-    if (checkForURL(formText)) {
+        if (checkForURL(formText)) {
 
         console.log("::: Form Submitted :::");
         getApiKey()
@@ -28,45 +29,45 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
     }
 
 
-    async function getApiKey () {
-        let req = await fetch('http://localhost:8081/api');
-        try {
-            let data = await req.json();
-            return data;
-        } catch (error) {
-            alert("There was an error:", error.message);
+        async function getApiKey () {
+            let req = await fetch('http://localhost:8081/api');
+            try {
+                let data = await req.json();
+                return data;
+            } catch (error) {
+                alert("There was an error:", error.message);
+            }
         }
-    }
 
-    async function getTextAnalysis (url, key, formURL) {
-        console.log("::: Waiting API Response :::");
-        let res = await fetch(`${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`);
-        try {
-            let apiResponse = await res.json();
-            console.log("::: Response Sent :::");
-            return apiResponse;
-        } catch (error) {
-            alert("There was an error:", error.message);
+        async function getTextAnalysis (url, key, formURL) {
+            console.log("::: Waiting API Response :::");
+            let res = await fetch(`${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`);
+            try {
+                let apiResponse = await res.json();
+                console.log("::: Response Sent :::");
+                return apiResponse;
+            } catch (error) {
+                alert("There was an error:", error.message);
+            }
         }
-    }
 
-    async function postData (url = '', data = {}) {
-        let res = await fetch(url, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
+        async function postData (url = '', data = {}) {
+            let res = await fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
 
-        try {
-            let newData = await res.json();
-            return newData
-        } catch(error) {
-            alert("There was an error:", error.message);
+            try {
+                let newData = await res.json();
+                return newData
+            } catch(error) {
+                alert("There was an error:", error.message);
+            }
         }
-    }
 
     async function updateUI () {
         let req = await fetch('/all');
@@ -84,7 +85,10 @@ const handleSubmit = document.querySelector('#submit').addEventListener('click',
         } catch (error){
         alert("There was an error:", error.message);
         }
-    }
+    };
+
+  });
+
 });
 
 export { handleSubmit }
