@@ -24,6 +24,7 @@ describe("Testing the submit functionality", () => {
         formText = 'https://thoughtbot.com/blog/5-useful-tips-for-a-better-commit-message';
         window.alert = () => {};
         
+        //If returns undefined, with no errors, it is working
         expect(handleSubmit).toBeUndefined();
     })    
 
