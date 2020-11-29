@@ -1,0 +1,3 @@
+[build]
+  functions = "./src/server"
+  functions = "./src/client/js"
