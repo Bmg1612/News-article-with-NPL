@@ -35,3 +35,6 @@ I used [Workbox](https://developers.google.com/web/tools/workbox) to add offline
 ## Contributions
 
 Any contributtions and/or suggestions are greatly appreciated.
+
+## License
+[MIT License](https://opensource.org/licenses/MIT).
