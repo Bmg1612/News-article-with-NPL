@@ -70,7 +70,6 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const newData = await res.json();
-        console.log(newData);
         return newData;
       } catch (error) {
         alert("There was an error:", error.message);
@@ -90,7 +89,6 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
             "<h2 class= 'error'>Sorry. This page cannot be analyzed because it is blocked.</h2>";
           return false;
         } else {
-          console.log(textData);
           results.innerHTML = `
             <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
