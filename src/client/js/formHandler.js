@@ -48,9 +48,13 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const apiResponse = await res.json();
-        return apiResponse;
+        if (apiResponse.status.code === "212") {
+          throw new Error();
+        } else {
+          return apiResponse;
+        }
       } catch (error) {
-        alert("There was an error:", error.message);
+        return false;
       }
     }
 
@@ -79,16 +83,24 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const textData = await req.json();
-        console.log(textData);
-        results.innerHTML = `
+        if (Object.entries(textData).length === 0) {
+          document.querySelector(".loader").style.display = "";
+          results.style.display = "";
+          results.innerHTML =
+            "<h2 class= 'error'>Sorry. This page cannot be analyzed because it is blocked.</h2>";
+          return false;
+        } else {
+          console.log(textData);
+          results.innerHTML = `
             <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
             <li class="results__item"><span class="api__title">Irony:</span> ${textData.irony}.</li>`;
-        document.querySelector(".loader").style.display = "";
-        document.getElementById("results").style.display = "";
-        results.scrollIntoView({ behavior: "smooth" });
+          document.querySelector(".loader").style.display = "";
+          document.getElementById("results").style.display = "";
+          results.scrollIntoView({ behavior: "smooth" });
+        }
       } catch (error) {
         alert("There was an error:", error.message);
       }
