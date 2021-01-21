@@ -1,95 +1,99 @@
-import { checkForURL } from "./urlChecker"
+import { checkForURL } from "./urlChecker";
 
 //Wait Dom to be loaded - Better for Jest testing
-const handleSubmit = document.addEventListener('DOMContentLoaded', function () {
-    document.querySelector('#submit').addEventListener('click', function callbackFunction (event) {
-        event.preventDefault();
+const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector("#submit").addEventListener("click", (event) => {
+    event.preventDefault();
 
-        let formText = document.getElementById('name').value;
-        const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
-        let apiKey = "";
-        // Checking if the URL is valid
-        if (checkForURL(formText)) {
+    const formText = document.getElementById("name").value;
+    const baseUrl = "https://api.meaningcloud.com/sentiment-2.1?";
+    let apiKey = "";
+    let data = {};
 
-        console.log("::: Form Submitted :::");
-        getApiKey()
-        .then (data => apiKey = data.key)
-        .then (apiKey => getTextAnalysis(baseUrl, apiKey, formText))
-        .then(apiResponse => {
-            postData('/addText', {
-                agreement: apiResponse.agreement,
-                subjectivity: apiResponse.subjectivity,
-                confidence: apiResponse.confidence,
-                irony: apiResponse.irony
-            });
-
+    document.getElementById("results").style.display = "none";
+    document.querySelector(".loader").style.display = "inline-block";
+    document.querySelector(".loader").scrollIntoView({ behavior: "smooth" });
+    // Checking if the URL is valid
+    if (checkForURL(formText)) {
+      getApiKey()
+        .then((apiKey) => getTextAnalysis(baseUrl, apiKey, formText))
+        .then((apiResponse) => {
+          return postData("/addText", {
+            agreement: apiResponse.agreement,
+            subjectivity: apiResponse.subjectivity,
+            confidence: apiResponse.confidence,
+            irony: apiResponse.irony,
+          });
         })
-        .then(data => updateUI());
+        .then(() => updateUI());
     } else {
-        alert("Invalid URL");
+      alert("Invalid URL");
     }
 
+    async function getApiKey() {
+      const req = await fetch("/api");
+      try {
+        data = await req.json();
+        apiKey = data.key;
+        return apiKey;
+      } catch (error) {
+        alert("There was an error:", error.message);
+      }
+    }
 
-        async function getApiKey () {
-            let req = await fetch('http://localhost:8081/api');
-            try {
-                let data = await req.json();
-                return data;
-            } catch (error) {
-                alert("There was an error:", error.message);
-            }
-        }
+    async function getTextAnalysis(url, key, formURL) {
+      const res = await fetch(
+        `${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`
+      );
 
-        async function getTextAnalysis (url, key, formURL) {
-            console.log("::: Waiting API Response :::");
-            let res = await fetch(`${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`);
-            try {
-                let apiResponse = await res.json();
-                console.log("::: Response Sent :::");
-                return apiResponse;
-            } catch (error) {
-                alert("There was an error:", error.message);
-            }
-        }
+      try {
+        const apiResponse = await res.json();
+        return apiResponse;
+      } catch (error) {
+        alert("There was an error:", error.message);
+      }
+    }
 
-        async function postData (url = '', data = {}) {
-            let res = await fetch(url, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
+    async function postData(url = "", data = {}) {
+      const res = await fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-            try {
-                let newData = await res.json();
-                return newData
-            } catch(error) {
-                alert("There was an error:", error.message);
-            }
-        }
+      try {
+        const newData = await res.json();
+        console.log(newData);
+        return newData;
+      } catch (error) {
+        alert("There was an error:", error.message);
+      }
+    }
 
-    async function updateUI () {
-        let req = await fetch('/all');
-        let results = document.getElementById('results');
+    async function updateUI() {
+      const req = await fetch("/all");
+      const results = document.getElementById("results");
 
-        try {
-            let textData = await req.json();
-            results.innerHTML = `
+      try {
+        const textData = await req.json();
+        console.log(textData);
+        results.innerHTML = `
             <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
             <li class="results__item"><span class="api__title">Irony:</span> ${textData.irony}.</li>`;
-            results.scrollIntoView({behavior: "smooth"});
-        } catch (error){
+        document.querySelector(".loader").style.display = "";
+        document.getElementById("results").style.display = "";
+        results.scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
         alert("There was an error:", error.message);
-        }
-    };
-
+      }
+    }
   });
-
 });
 
-export { handleSubmit }
+export { handleSubmit };
