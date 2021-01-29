@@ -16,7 +16,7 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
     // Checking if the URL is valid
     if (checkForURL(formText)) {
       getApiKey()
-        .then((apiKey) => getTextAnalysis(baseUrl, apiKey, formText))
+        .then(() => getTextAnalysis(baseUrl, apiKey, formText))
         .then((apiResponse) => {
           return postData("/addText", {
             agreement: apiResponse.agreement,
@@ -27,33 +27,41 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
         })
         .then(() => updateUI());
     } else {
-      alert("Invalid URL");
+      document.querySelector(".loader").style.display = "";
+      document.querySelector(".main__bottom").innerHTML =
+        '<h3 class="error"><strong>Error!</strong> Please insert a valid URL</h3>';
+      return false;
     }
 
     async function getApiKey() {
-      const req = await fetch("/api");
       try {
+        const req = await fetch("/api");
         data = await req.json();
         apiKey = data.key;
         return apiKey;
-      } catch (error) {
-        alert("There was an error:", error.message);
+      } catch (e) {
+        document.querySelector(".loader").style.display = "";
+        document.querySelector(".main__bottom").innerHTML =
+          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
+        return false;
       }
     }
 
     async function getTextAnalysis(url, key, formURL) {
-      const res = await fetch(
-        `${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`
-      );
-
       try {
+        const res = await fetch(
+          `${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`
+        );
         const apiResponse = await res.json();
         if (apiResponse.status.code === "212") {
           throw new Error();
         } else {
           return apiResponse;
         }
-      } catch (error) {
+      } catch (e) {
+        document.querySelector(".loader").style.display = "";
+        document.querySelector(".main__bottom").innerHTML =
+          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
         return false;
       }
     }
@@ -71,22 +79,24 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
       try {
         const newData = await res.json();
         return newData;
-      } catch (error) {
-        alert("There was an error:", error.message);
+      } catch (e) {
+        document.querySelector(".loader").style.display = "";
+        document.querySelector(".main__bottom").innerHTML =
+          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
+        return false;
       }
     }
 
     async function updateUI() {
-      const req = await fetch("/all");
       const results = document.getElementById("results");
-
       try {
+        const req = await fetch("/all");
         const textData = await req.json();
         if (Object.entries(textData).length === 0) {
           document.querySelector(".loader").style.display = "";
           results.style.display = "";
           results.innerHTML =
-            "<h2 class= 'error'>Sorry. This page cannot be analyzed because it is blocked.</h2>";
+            "<h2 class='error'><strong>Sorry</strong>. This page cannot be analyzed because it is blocked.</h2>";
           return false;
         } else {
           results.innerHTML = `
@@ -99,8 +109,11 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("results").style.display = "";
           results.scrollIntoView({ behavior: "smooth" });
         }
-      } catch (error) {
-        alert("There was an error:", error.message);
+      } catch (e) {
+        document.querySelector(".loader").style.display = "";
+        document.querySelector(".main__bottom").innerHTML =
+          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
+        return false;
       }
     }
   });
