@@ -10,6 +10,9 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
     let apiKey = "";
     let data = {};
 
+    const errorDiv = document.getElementById("error");
+
+    errorDiv.style.display = "";
     document.getElementById("results").style.display = "none";
     document.querySelector(".loader").style.display = "inline-block";
     document.querySelector(".loader").scrollIntoView({ behavior: "smooth" });
@@ -25,44 +28,38 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
             irony: apiResponse.irony,
           });
         })
-        .then(() => updateUI());
+        .then(() => updateUI())
+        .catch(() => {
+          errorDiv.innerHTML =
+            '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
+          document.querySelector(".loader").style.display = "";
+          errorDiv.style.display = "block";
+          return false;
+        });
     } else {
       document.querySelector(".loader").style.display = "";
-      document.querySelector(".main__bottom").innerHTML =
+      errorDiv.innerHTML =
         '<h3 class="error"><strong>Error!</strong> Please insert a valid URL</h3>';
+      errorDiv.style.display = "block";
       return false;
     }
 
     async function getApiKey() {
-      try {
-        const req = await fetch("/api");
-        data = await req.json();
-        apiKey = data.key;
-        return apiKey;
-      } catch (e) {
-        document.querySelector(".loader").style.display = "";
-        document.querySelector(".main__bottom").innerHTML =
-          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
-        return false;
-      }
+      const req = await fetch("/api");
+      data = await req.json();
+      apiKey = data.key;
+      return apiKey;
     }
 
     async function getTextAnalysis(url, key, formURL) {
-      try {
-        const res = await fetch(
-          `${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`
-        );
-        const apiResponse = await res.json();
-        if (apiResponse.status.code === "212") {
-          throw new Error();
-        } else {
-          return apiResponse;
-        }
-      } catch (e) {
-        document.querySelector(".loader").style.display = "";
-        document.querySelector(".main__bottom").innerHTML =
-          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
-        return false;
+      const res = await fetch(
+        `${url}key=${key}&of=json.&model=general&lang=en&url=${formURL}`
+      );
+      const apiResponse = await res.json();
+      if (apiResponse.status.code === "212") {
+        throw new Error();
+      } else {
+        return apiResponse;
       }
     }
 
@@ -76,44 +73,30 @@ const handleSubmit = document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(data),
       });
 
-      try {
-        const newData = await res.json();
-        return newData;
-      } catch (e) {
-        document.querySelector(".loader").style.display = "";
-        document.querySelector(".main__bottom").innerHTML =
-          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
-        return false;
-      }
+      const newData = await res.json();
+      return newData;
     }
 
     async function updateUI() {
       const results = document.getElementById("results");
-      try {
-        const req = await fetch("/all");
-        const textData = await req.json();
-        if (Object.entries(textData).length === 0) {
-          document.querySelector(".loader").style.display = "";
-          results.style.display = "";
-          results.innerHTML =
-            "<h2 class='error'><strong>Sorry</strong>. This page cannot be analyzed because it is blocked.</h2>";
-          return false;
-        } else {
-          results.innerHTML = `
+      const req = await fetch("/all");
+      const textData = await req.json();
+      if (Object.entries(textData).length === 0) {
+        document.querySelector(".loader").style.display = "";
+        results.style.display = "";
+        results.innerHTML =
+          "<h2 class='error'><strong>Sorry</strong>. This page cannot be analyzed because it is blocked.</h2>";
+        return false;
+      } else {
+        results.innerHTML = `
             <li class="results__item"><span class="api__title">URL:</span> ${formText}</li>
             <li class="results__item"><span class="api__title">Agreement:</span> ${textData.agreement};</li>
             <li class="results__item"><span class="api__title">Subjectivity:</span> ${textData.subjectivity};</li>
             <li class="results__item"><span class="api__title">Confidence:</span> ${textData.confidence}%;</li>
             <li class="results__item"><span class="api__title">Irony:</span> ${textData.irony}.</li>`;
-          document.querySelector(".loader").style.display = "";
-          document.getElementById("results").style.display = "";
-          results.scrollIntoView({ behavior: "smooth" });
-        }
-      } catch (e) {
         document.querySelector(".loader").style.display = "";
-        document.querySelector(".main__bottom").innerHTML =
-          '<h3 class="error"><strong>Error!</strong> Sorry, there was an internal error, can you please reload the page and try again?</h3>';
-        return false;
+        document.getElementById("results").style.display = "";
+        results.scrollIntoView({ behavior: "smooth" });
       }
     }
   });
